@@ -9,17 +9,9 @@ Install instructions
 --------------------
 
 - Install drupal module.
-- Use Views module to add a share link to your listing ("Simple Share link"
-  field)
-- Alternatively use hook_link_alter to add a simple share link to nodes.
+- Go to admin/settings/simpleshare and pick which share methods should be
+  available.
+- Enable Simple Share on nodes by enabling it via content type edit forms.
+- Alterntively, use Views module to add a share link to your listing 
+  ("Simple Share link" field)
 
-Simple Share link format
-------------------------
-
-$links['simpleshare'] = array(
-  'title' => t('Share'),
-  'href' => '',
-  'attributes' => array(
-    'class' => 'simpleshare',
-  ),
-);
