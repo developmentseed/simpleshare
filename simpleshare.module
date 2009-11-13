@@ -1,0 +1,126 @@
+<?php
+
+/**
+ * Implementation of hook_menu().
+ */
+function simpleshare_menu() {
+  $items = array();
+  $items['simpleshare'] = array(
+    'type' => MENU_CALLBACK,
+    'page callback' => 'simpleshare_service_links',
+    'page arguments' => array(),
+    'access callback' => 'user_access',
+    'access arguments' => array('access content'),
+  );
+  return $items;
+}
+
+/**
+ * Implementation of hook_views_api().
+ */
+function simpleshare_views_api() {
+  return array(
+    'api' => '2.0',
+    'path' => drupal_get_path('module', 'simpleshare') .'/views',
+  );
+}
+
+/**
+ * AJAX callback for generating service links.
+ */
+function simpleshare_service_links() {
+  if (isset($_GET['url'], $_GET['title'])) {
+    $title = $_GET['title'];
+    $url = $_GET['url'];
+    $short_url = _simpleshare_short_url($_GET['url']);
+    $full = "{$title} ({$short_url})";
+    $html = $title .' ('. l($short_url, $short_url, array('absolute' => TRUE)) .')';
+
+    $links = array();
+    $links['twitter'] = array(
+      'title' => t('Twitter'),
+      'href' => 'http://twitter.com',
+      'query' => 'status='. urlencode($full),
+      'attributes' => array('target' => '_blank'),
+    );
+    $links['facebook'] = array(
+      'title' => t('Facebook'),
+      'href' => 'http://facebook.com/share.php',
+      'query' => 'u='. urlencode($url),
+      'attributes' => array('target' => '_blank'),
+    );
+    $links['email'] = array(
+      'title' => t('E-mail'),
+      'href' => 'mailto:',
+      // @TODO: test with more mail clients. Firefox -> Gmail integration
+      // does not like urlencode()'d strings.
+      'query' => array('Subject' => $title, 'Body' => $full),
+      'attributes' => array('target' => '_blank'),
+    );
+    $links = theme('links', $links);
+    print theme('simpleshare_popup', $links, $html);
+  }
+  exit;
+}
+
+/**
+ * Push URL through a URL shortening service.
+ */
+function _simpleshare_short_url($url) {
+  // @TODO make this configurable
+  // $api = "http://is.gd/api.php?longurl={$url}";
+  $api = "http://tinyurl.com/api-create.php?url={$url}";
+
+  if (function_exists('curl_init')) {
+    $session = curl_init();
+    curl_setopt($session, CURLOPT_URL, $api);
+    curl_setopt($session, CURLOPT_RETURNTRANSFER, 1);
+    $url = curl_exec($session);
+    curl_close($session);
+  }
+  return $url;
+}
+
+/**
+ * Implementation of hook_theme().
+ */
+function simpleshare_theme() {
+  return array('simpleshare_popup' => array());
+}
+
+/**
+ * Theme a share popup box.
+ */
+function theme_simpleshare_popup($service_links, $text) {
+  $output = "<div class='simpleshare-popup clear-block'>";
+  $output .= "<span class='close'>". t('Close') ."</span>";
+  $output .= "<h2>{$text}</h2>";
+  $output .= $service_links;
+  $output .= "</div>";
+  return $output;
+}
+
+/**
+ * Implementation of hook_views_pre_build().
+ */
+function simpleshare_views_pre_build(&$view) {
+  if ($view->base_table == 'feeds_data_syndication' && get_class($view->display_handler) == 'views_plugin_display_page') {
+    $fields = $view->display_handler->get_option('fields');
+    if (empty($fields['simpleshare_link'])) {
+      $fields['simpleshare_link'] = array(
+        'url' => '[url]',
+        'text' => '[title]',
+        'exclude' => '',
+        'link_text' => 'Share',
+        'id' => 'simpleshare_link',
+        'table' => 'views',
+        'field' => 'simpleshare_link',
+        'override' => array(
+          'button' => 'Override',
+        ),
+        'relationship' => 'none',
+      );
+      $view->display_handler->set_option('fields', $fields);
+    }
+  }
+}

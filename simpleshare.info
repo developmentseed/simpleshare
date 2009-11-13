@@ -1,0 +1,3 @@
+core = "6.x"
+description = "Simple sharing of URLs using various methods. Supports Twitter, Facebook and email."
+name = "Simple Share"
