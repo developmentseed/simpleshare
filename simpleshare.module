@@ -69,6 +69,7 @@ function simpleshare_link($type, $object, $teaser = FALSE) {
         'title' => t('Share'),
         'href' => '',
         'attributes' => array(
+          'title' => check_plain($object->title),
           'class' => 'simpleshare',
         ),
       ),
