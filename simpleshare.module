@@ -22,6 +22,8 @@ function simpleshare_menu() {
     'access arguments' => array('access content'),
   );
   $items['admin/settings/simpleshare'] = array(
+    'title' => 'Simpleshare',
+    'description' => 'Control simpleshare sharing methods.',
     'type' => MENU_NORMAL_ITEM,
     'page callback' => 'drupal_get_form',
     'page arguments' => array('simpleshare_admin_settings'),
@@ -89,7 +91,7 @@ function simpleshare_service_links() {
     $html = $title .' ('. l($short_url, $short_url, array('absolute' => TRUE)) .')';
 
     $links = array();
-    $methods = variable_get('simpleshare_methods', array_keys(simpleshare_methods()));
+    $methods = variable_get('simpleshare_methods', simpleshare_methods());
     if ($methods['twitter']) {
       $links['twitter'] = array(
         'title' => t('Twitter'),
