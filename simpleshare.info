@@ -1,3 +1,10 @@
 core = "6.x"
 description = "Simple sharing of URLs using various methods. Supports Twitter, Facebook and email."
 name = "Simple Share"
+
+; Information added by fserver
+core = "6.x"
+datestamp = "1264459634"
+project = "simpleshare"
+project status url = "http://code.developmentseed.org/fserver"
+version = "6.x-1.0-beta1"
