@@ -69,7 +69,8 @@ function simpleshare_link($type, $object, $teaser = FALSE) {
     return array(
       'simpleshare' => array(
         'title' => t('Share'),
-        'href' => '',
+        'href' => "node/{$object->nid}",
+        'absolute' => TRUE,
         'attributes' => array(
           'title' => check_plain($object->title),
           'class' => 'simpleshare',
