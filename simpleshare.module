@@ -186,28 +186,3 @@ function theme_simpleshare_popup($service_links, $text) {
   $output .= "</div>";
   return $output;
 }
-
-/**
- * Implementation of hook_views_pre_build().
- */
-function simpleshare_views_pre_build(&$view) {
-  if ($view->base_table == 'feeds_data_syndication' && get_class($view->display_handler) == 'views_plugin_display_page') {
-    $fields = $view->display_handler->get_option('fields');
-    if (empty($fields['simpleshare_link'])) {
-      $fields['simpleshare_link'] = array(
-        'url' => '[url]',
-        'text' => '[title]',
-        'exclude' => '',
-        'link_text' => 'Share',
-        'id' => 'simpleshare_link',
-        'table' => 'views',
-        'field' => 'simpleshare_link',
-        'override' => array(
-          'button' => 'Override',
-        ),
-        'relationship' => 'none',
-      );
-      $view->display_handler->set_option('fields', $fields);
-    }
-  }
-}
