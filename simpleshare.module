@@ -119,6 +119,15 @@ function simpleshare_service_links() {
         'attributes' => array('target' => '_blank'),
       );
     }
+    if ($methods['delicious']) {
+      $links['delicious'] = array(
+        'title' => t('Delicious'),
+        'href' => 'http://delicious.com/save',
+        'query' => 'v=5&noui&jump=close&url='. urlencode($url) .
+                   '&title='. urlencode($title),
+        'attributes' => array('target' => '_blank'),
+      );
+    }
     if ($methods['email']) {
       $links['email'] = array(
         'title' => t('E-mail'),
@@ -144,6 +153,7 @@ function simpleshare_service_links() {
 function simpleshare_methods() {
   return array(
     'email' => t('Email'),
+    'delicious' => t('Delicious'),
     'facebook' => t('Facebook'),
     'twitter' => t('Twitter'),
     'myspace' => t('MySpace'),
