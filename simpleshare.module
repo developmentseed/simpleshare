@@ -81,6 +81,56 @@ function simpleshare_link($type, $object, $teaser = FALSE) {
 }
 
 /**
+ * Implementation of hook_context_link_alter()
+ */
+function simpleshare_context_links_alter(&$links) {
+  if ($plugin = context_get_plugin('reaction', 'simpleshare_link')) {
+    $plugin->execute($links);
+  }
+}
+
+/**
+ * Implementation of hook_ctools_plugin_plugins().
+ */
+function simpleshare_ctools_plugin_plugins() {
+  return array(
+    'cache' => TRUE,
+    'use hooks' => TRUE,
+  );
+}
+
+/**
+ * Implementation of hook_context_plugins().
+ */
+function simpleshare_context_plugins() {
+  $plugins = array();
+  $plugins['simpleshare_reaction_link'] = array(
+    'handler' => array(
+      'path' => drupal_get_path('module', 'simpleshare'),
+      'file' => 'simpleshare_reaction_link.inc',
+      'class' => 'simpleshare_reaction_link',
+      'parent' => 'context_reaction',
+    ),
+  );
+  return $plugins;
+}
+
+/**
+ * Implementation of hook_context_registry().
+ */
+function simpleshare_context_registry() {
+  return array(
+    'reactions' => array(
+      'simpleshare_link' => array(
+        'title' => t('Simple share link'),
+        'description' => t('Show a simple share link.'),
+        'plugin' => 'simpleshare_reaction_link',
+      ),
+    ),
+  );
+}
+
+/**
  * AJAX callback for generating service links.
  */
 function simpleshare_service_links() {
