@@ -12,6 +12,7 @@ Install instructions
 - Go to admin/settings/simpleshare and pick which share methods should be
   available.
 - Enable Simple Share on nodes by enabling it via content type edit forms.
-- Alterntively, use Views module to add a share link to your listing
+- Alternatively, use Views module to add a share link to your listing
   ("Simple Share link" field)
-
+- Alternatively, use Context to enable a Simple Share link as a context link on
+  any page (requires theme to support context links).
