@@ -1,6 +1,18 @@
 <?php
 
 /**
+ * Implementation of hook_init().
+ *
+ * @todo Come up with smarter inclusion of CSS/JS. Including on the
+ * hook_context_links_alter() level won't work as it is too late in the page
+ * build.
+ */
+function simpleshare_init() {
+  drupal_add_js(drupal_get_path('module', 'simpleshare') .'/simpleshare.js');
+  drupal_add_css(drupal_get_path('module', 'simpleshare') .'/simpleshare.css');
+}
+
+/**
  * Implementation of hook_help().
  */
 function simpleshare_help($path, $arg) {
@@ -64,8 +76,6 @@ function simpleshare_form_alter(&$form, $form_state, $form_id) {
  */
 function simpleshare_link($type, $object, $teaser = FALSE) {
   if ($type == 'node' && !$teaser && variable_get('simpleshare_enabled_'. $object->type, 0)) {
-    drupal_add_js(drupal_get_path('module', 'simpleshare') .'/simpleshare.js');
-    drupal_add_css(drupal_get_path('module', 'simpleshare') .'/simpleshare.css');
     return array(
       'simpleshare' => array(
         'title' => t('Share'),

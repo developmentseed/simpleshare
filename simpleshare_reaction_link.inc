@@ -20,8 +20,6 @@ class simpleshare_reaction_link extends context_reaction {
     $contexts = context_active_contexts();
     foreach ($contexts as $context) {
       if (!empty($context->reactions['simpleshare_link'])) {
-        drupal_add_js(drupal_get_path('module', 'simpleshare') .'/simpleshare.js');
-        drupal_add_css(drupal_get_path('module', 'simpleshare') .'/simpleshare.css');
         $links['simpleshare_link'] = array(
           'title' => $this->fetch_from_context($context) ? $this->fetch_from_context($context) : 'Share',
           'href' => $_GET['q'],
