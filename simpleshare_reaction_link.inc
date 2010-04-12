@@ -21,13 +21,10 @@ class simpleshare_reaction_link extends context_reaction {
     foreach ($contexts as $context) {
       if (!empty($context->reactions['simpleshare_link'])) {
         $links['simpleshare_link'] = array(
-          'title' => $this->fetch_from_context($context) ? $this->fetch_from_context($context) : 'Share',
+          'title' => t($this->fetch_from_context($context)) ? t($this->fetch_from_context($context)) : t('Share'),
           'href' => $_GET['q'],
           'absolute' => TRUE,
-          'attributes' => array(
-            'title' => drupal_get_title(),
-            'class' => 'simpleshare',
-          ),
+          'attributes' => array('class' => 'simpleshare'),
         );
       }
     }
