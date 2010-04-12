@@ -145,9 +145,9 @@ function simpleshare_context_registry() {
  */
 function simpleshare_service_links() {
   if (isset($_GET['url'], $_GET['title'])) {
-    $title = $_GET['title'];
-    $url = $_GET['url'];
-    $short_url = _simpleshare_short_url($_GET['url']);
+    $title = check_plain($_GET['title']);
+    $url =   check_url($_GET['url']);
+    $short_url = _simpleshare_short_url($url);
     $full = "{$title} ({$short_url})";
     $html = $title .' ('. l($short_url, $short_url, array('absolute' => TRUE)) .')';
 
