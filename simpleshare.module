@@ -144,7 +144,8 @@ function simpleshare_context_registry() {
  * AJAX callback for generating service links.
  */
 function simpleshare_service_links() {
-  if (isset($_GET['url'], $_GET['title'])) {
+  if (isset($_GET['url'], $_GET['title']) &&
+     (_simpleshare_local_url($_GET['url']) || variable_get('simpleshare_non_local_url', FALSE))) {
     $title = check_plain($_GET['title']);
     $url =   check_url($_GET['url']);
     $short_url = _simpleshare_short_url($url);
@@ -236,6 +237,13 @@ function _simpleshare_short_url($url) {
     curl_close($session);
   }
   return $url;
+}
+
+/**
+ * Make sure URL is a local URL.
+ */
+function _simpleshare_local_url($url) {
+  return ($_SERVER['HTTP_HOST'] == parse_url($url, PHP_URL_HOST));
 }
 
 /**
