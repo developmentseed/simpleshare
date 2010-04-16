@@ -149,7 +149,8 @@ function simpleshare_service_links() {
     $title = check_plain($_GET['title']);
     $url =   check_url($_GET['url']);
     $short_url = _simpleshare_short_url($url);
-    $full = "{$title} ({$short_url})";
+    $full = "{$title} ({$url})";
+    $full_short = "{$title} ({$short_url})";
     $html = $title .' ('. l($short_url, $short_url, array('absolute' => TRUE)) .')';
 
     $links = array();
@@ -158,7 +159,7 @@ function simpleshare_service_links() {
       $links['twitter'] = array(
         'title' => t('Twitter'),
         'href' => 'http://twitter.com',
-        'query' => 'status='. urlencode($full),
+        'query' => 'status='. urlencode($full_short),
         'attributes' => array('target' => '_blank'),
       );
     }
