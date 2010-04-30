@@ -75,7 +75,7 @@ function simpleshare_form_alter(&$form, $form_state, $form_id) {
  * Implementation of hook_link().
  */
 function simpleshare_link($type, $object, $teaser = FALSE) {
-  if ($type == 'node' && !$teaser && variable_get('simpleshare_enabled_'. $object->type, 0)) {
+  if ($type == 'node' && variable_get('simpleshare_enabled_'. $object->type, 0)) {
     return array(
       'simpleshare' => array(
         'title' => t('Share'),
