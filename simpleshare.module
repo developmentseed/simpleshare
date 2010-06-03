@@ -147,15 +147,23 @@ function simpleshare_service_links() {
   if (isset($_GET['url'], $_GET['title']) &&
      (_simpleshare_local_url($_GET['url']) || variable_get('simpleshare_non_local_url', FALSE))) {
     $title = check_plain($_GET['title']);
-    $url =   check_url($_GET['url']);
-    $short_url = _simpleshare_short_url($url);
-    $full = "{$title} ({$url})";
-    $full_short = "{$title} ({$short_url})";
-    $html = $title .' ('. l($short_url, $short_url, array('absolute' => TRUE)) .')';
+    $url = check_url($_GET['url']);
+
+    $methods = variable_get('simpleshare_methods', simpleshare_methods());
+    $urls = array();
+    foreach ($methods as $key => $val) {
+      if ($val) {
+        $urls[$key] = $url;
+      }
+    }
+    drupal_alter('simpleshare_service_urls', $urls);
 
     $links = array();
-    $methods = variable_get('simpleshare_methods', simpleshare_methods());
     if ($methods['twitter']) {
+      $url = $urls['twitter'];
+      $short_url = _simpleshare_short_url($url);
+      $full_short = "{$title} ({$short_url})";
+      
       $links['twitter'] = array(
         'title' => t('Twitter'),
         'href' => 'http://twitter.com',
@@ -164,6 +172,8 @@ function simpleshare_service_links() {
       );
     }
     if ($methods['facebook']) {
+      $url = $urls['facebook'];
+
       $links['facebook'] = array(
         'title' => t('Facebook'),
         'href' => 'http://facebook.com/share.php',
@@ -172,6 +182,9 @@ function simpleshare_service_links() {
       );
     }
     if ($methods['myspace']) {
+      $url = $urls['myspace'];
+      $full = "{$title} ({$url})";
+
       $links['myspace'] = array(
         'title' => t('MySpace'),
         'href' => 'http://www.myspace.com/index.cfm',
@@ -182,6 +195,8 @@ function simpleshare_service_links() {
       );
     }
     if ($methods['delicious']) {
+      $url = $urls['delicious'];
+
       $links['delicious'] = array(
         'title' => t('Delicious'),
         'href' => 'http://delicious.com/save',
@@ -191,6 +206,9 @@ function simpleshare_service_links() {
       );
     }
     if ($methods['email']) {
+      $url = $urls['email'];
+      $full = "{$title} ({$url})";
+
       $links['email'] = array(
         'title' => t('E-mail'),
         'href' => 'mailto:',
@@ -200,6 +218,7 @@ function simpleshare_service_links() {
         'attributes' => array('target' => '_blank'),
       );
     }
+    drupal_alter('simpleshare_service_links', $links);
     $links = theme('links', $links);
     print theme('simpleshare_popup', $links, $html);
   }
@@ -225,7 +244,11 @@ function simpleshare_methods() {
 /**
  * Push URL through a URL shortening service.
  */
-function _simpleshare_short_url($url) {
+function _simpleshare_short_url($url, $reset = FALSE) {
+  static $short_urls = array();
+  if ($short_urls[$url] && !$reset) {
+    return $short_urls[$url];
+  }
   // @TODO make this configurable
   // $api = "http://is.gd/api.php?longurl={$url}";
   $api = "http://tinyurl.com/api-create.php?url={$url}";
@@ -234,10 +257,10 @@ function _simpleshare_short_url($url) {
     $session = curl_init();
     curl_setopt($session, CURLOPT_URL, $api);
     curl_setopt($session, CURLOPT_RETURNTRANSFER, 1);
-    $url = curl_exec($session);
+    $short_urls[$url] = curl_exec($session);
     curl_close($session);
   }
-  return $url;
+  return $short_urls[$url];
 }
 
 /**

@@ -5,7 +5,7 @@ Drupal.behaviors.simpleshare = function() {
       $('div.simpleshare-popup').remove();
 
       // Make an AJAX call for this link.
-      var title = $(this).attr('title');
+      var title = $(this).attr('title') ? $(this).attr('title') : $(document).attr('title');
       var url = $(this).attr('href');
       var ajax_url = Drupal.settings.basePath + 'simpleshare';
       $.get(ajax_url, {'title': title, 'url': url}, function(data) {
