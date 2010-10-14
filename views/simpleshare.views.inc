@@ -7,22 +7,6 @@
  */
 
 /**
- * Implements hook_views_handlers().
- */
-function simpleshare_views_handlers() {
-  return array(
-    'info' => array(
-      'path' => drupal_get_path('module', 'simpleshare') . '/views',
-    ),
-    'handlers' => array(
-      'simpleshare_handler_field_link' => array(
-        'parent' => 'views_handler_field',
-      ),
-    ),
-  );
-}
-
-/**
  * Implements hook_views_data_alter().
  */
 function simpleshare_views_data_alter(&$data) {

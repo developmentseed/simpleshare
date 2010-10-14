@@ -52,7 +52,7 @@ function simpleshare_menu() {
  */
 function simpleshare_views_api() {
   return array(
-    'api' => '3.0',
+    'api' => '2.0',
     'path' => drupal_get_path('module', 'simpleshare') . '/views',
   );
 }

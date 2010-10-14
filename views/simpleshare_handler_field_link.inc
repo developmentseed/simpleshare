@@ -10,17 +10,19 @@
  * Allows users to link to a given item through a service.
  */
 class simpleshare_handler_field_link extends views_handler_field {
+  function query() {
+    // do nothing -- to override the parent query.
+  }
+
   function option_definition() {
-    $options = array();
-    $options['url'] = array('default' => '');
-    $options['text'] = array('default' => '');
+    $options = parent::option_definition();
+    $options['text'] = array('default' => '', 'translatable' => TRUE);
+    $options['url'] = array('default' => '', 'translatable' => FALSE);
     return $options;
   }
 
   function options_form(&$form, &$form_state) {
-    $parent_form = array();
-    parent::options_form($parent_form, $form_state);
-
+    parent::options_form($form, $form_state);
     $form['url'] = array(
       '#title' => t('URL to share'),
       '#type' => 'textfield',
@@ -35,12 +37,11 @@ class simpleshare_handler_field_link extends views_handler_field {
       '#type' => 'item',
       '#value' => $parent_form['alter']['help']['#prefix'],
     );
+
   }
 
-  function query() { return; }
-
   function render($values) {
-    return check_plain($this->options['link_text']);
+    return check_plain($this->options['text']);
   }
 
   /**
@@ -68,10 +69,9 @@ class simpleshare_handler_field_link extends views_handler_field {
       'absolute' => TRUE,
       'attributes' => array(
         'title' => $text,
-        'class' => 'simpleshare',
       ),
     );
-    $output = l($value, $url, $options);
+    $output = '<span class="simpleshare">' . l($value, $url, $options) . '</span>';
     return $output;
   }
 }
