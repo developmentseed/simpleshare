@@ -1,4 +1,6 @@
 <?php
+// $Id$
+
 /**
  * @file
  * Class definition of simpleshare_handler_field_link.
@@ -48,8 +50,8 @@ class simpleshare_handler_field_link extends views_handler_field {
    * text-replacement rendering is necessary.
    */
   function advanced_render($values) {
-    drupal_add_js(drupal_get_path('module', 'simpleshare') .'/simpleshare.js');
-    drupal_add_css(drupal_get_path('module', 'simpleshare') .'/simpleshare.css');
+    drupal_add_js(drupal_get_path('module', 'simpleshare') . '/simpleshare.js');
+    drupal_add_css(drupal_get_path('module', 'simpleshare') . '/simpleshare.css');
 
     $this->last_render = $value = $this->render($values);
     $this->original_value = $value;

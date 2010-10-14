@@ -1,28 +1,29 @@
 <?php
+// $Id$
 
 /**
- * Implementation of hook_init().
+ * Implements hook_init().
  *
  * @todo Come up with smarter inclusion of CSS/JS. Including on the
  * hook_context_links_alter() level won't work as it is too late in the page
  * build.
  */
 function simpleshare_init() {
-  drupal_add_js(drupal_get_path('module', 'simpleshare') .'/simpleshare.js');
-  drupal_add_css(drupal_get_path('module', 'simpleshare') .'/simpleshare.css');
+  drupal_add_js(drupal_get_path('module', 'simpleshare') . '/simpleshare.js');
+  drupal_add_css(drupal_get_path('module', 'simpleshare') . '/simpleshare.css');
 }
 
 /**
- * Implementation of hook_help().
+ * Implements hook_help().
  */
 function simpleshare_help($path, $arg) {
-  if ($path == 'admin/settings/simpleshare') {
+  if ($path == 'admin/config/system/simpleshare') {
     return t('Choose share methods that should be available to users. For actually showing a share link, configure workflow settings of content types or use Views to add a "Simple Share link" field to your listing.');
   }
 }
 
 /**
- * Implementation of hook_menu().
+ * Implements hook_menu().
  */
 function simpleshare_menu() {
   $items = array();
@@ -33,7 +34,7 @@ function simpleshare_menu() {
     'access callback' => 'user_access',
     'access arguments' => array('access content'),
   );
-  $items['admin/settings/simpleshare'] = array(
+  $items['admin/config/system/simpleshare'] = array(
     'title' => 'Simpleshare',
     'description' => 'Control simpleshare sharing methods.',
     'type' => MENU_NORMAL_ITEM,
@@ -47,51 +48,48 @@ function simpleshare_menu() {
 }
 
 /**
- * Implementation of hook_views_api().
+ * Implements hook_views_api().
  */
 function simpleshare_views_api() {
   return array(
-    'api' => '2.0',
-    'path' => drupal_get_path('module', 'simpleshare') .'/views',
+    'api' => '3.0',
+    'path' => drupal_get_path('module', 'simpleshare') . '/views',
   );
 }
 
 /**
- * Implementation of hook_form_alter().
+ * Implements hook_form_alter().
  */
-function simpleshare_form_alter(&$form, $form_state, $form_id) {
+function simpleshare_form_alter(&$form, &$form_state, $form_id) {
   if ($form_id == 'node_type_form') {
     $form['workflow']['simpleshare_enabled'] = array(
       '#type' => 'radios',
       '#title' => t('Simple Share'),
-      '#description' => t('If checked, offers Share link on full node views. Choose which share methods to expose on the !settings_form.', array('!admin_form' => l(t('Simple Share settings form'), 'admin/settings/simpleshare'))),
+      '#description' => t('If checked, offers Share link on full node views. Choose which share methods to expose on the !settings_form.', array('!admin_form' => l(t('Simple Share settings form'), 'admin/config/system/simpleshare'))),
       '#options' => array(0 => t('Disabled'), 1 => t('Enabled')),
-      '#default_value' => variable_get('simpleshare_enabled_'. $form['#node_type']->type, 0),
+      '#default_value' => variable_get('simpleshare_enabled_' . $form['#node_type']->type, 0),
     );
   }
 }
 
 /**
- * Implementation of hook_link().
+ * Implements hook_node_view().
  */
-function simpleshare_link($type, $object, $teaser = FALSE) {
-  if ($type == 'node' && variable_get('simpleshare_enabled_'. $object->type, 0)) {
-    return array(
-      'simpleshare' => array(
-        'title' => t('Share'),
-        'href' => "node/{$object->nid}",
-        'absolute' => TRUE,
-        'attributes' => array(
-          'title' => check_plain($object->title),
-          'class' => 'simpleshare',
-        ),
+function simpleshare_node_view($node, $view_mode) {
+  if (variable_get('simpleshare_enabled_' . $node->type, 0)) {
+    $node->content['links']['#links']['simpleshare'] = array(
+      'title' => t('Share'),
+      'href' => "node/{$node->nid}",
+      'absolute' => TRUE,
+      'attributes' => array(
+        'title' => check_plain($node->title),
       ),
     );
   }
 }
 
 /**
- * Implementation of hook_context_link_alter()
+ * Implements hook_context_link_alter().
  */
 function simpleshare_context_links_alter(&$links) {
   if ($plugin = context_get_plugin('reaction', 'simpleshare_link')) {
@@ -100,7 +98,7 @@ function simpleshare_context_links_alter(&$links) {
 }
 
 /**
- * Implementation of hook_ctools_plugin_plugins().
+ * Implements hook_ctools_plugin_plugins().
  */
 function simpleshare_ctools_plugin_plugins() {
   return array(
@@ -110,7 +108,7 @@ function simpleshare_ctools_plugin_plugins() {
 }
 
 /**
- * Implementation of hook_context_plugins().
+ * Implements hook_context_plugins().
  */
 function simpleshare_context_plugins() {
   $plugins = array();
@@ -126,7 +124,7 @@ function simpleshare_context_plugins() {
 }
 
 /**
- * Implementation of hook_context_registry().
+ * Implements hook_context_registry().
  */
 function simpleshare_context_registry() {
   return array(
@@ -163,21 +161,25 @@ function simpleshare_service_links() {
       $url = $urls['twitter'];
       $short_url = _simpleshare_short_url($url);
       $full_short = "{$title} ({$short_url})";
-      
-      $links['twitter'] = array(
+
+      $links['links']['twitter'] = array(
         'title' => t('Twitter'),
         'href' => 'http://twitter.com',
-        'query' => 'status='. urlencode($full_short),
+        'query' => array(
+          'status' => $full_short,
+        ),
         'attributes' => array('target' => '_blank'),
       );
     }
     if ($methods['facebook']) {
       $url = $urls['facebook'];
 
-      $links['facebook'] = array(
+      $links['links']['facebook'] = array(
         'title' => t('Facebook'),
         'href' => 'http://facebook.com/share.php',
-        'query' => 'u='. urlencode($url),
+        'query' => array(
+          'u' => $url,
+        ),
         'attributes' => array('target' => '_blank'),
       );
     }
@@ -185,23 +187,31 @@ function simpleshare_service_links() {
       $url = $urls['myspace'];
       $full = "{$title} ({$url})";
 
-      $links['myspace'] = array(
+      $links['links']['myspace'] = array(
         'title' => t('MySpace'),
         'href' => 'http://www.myspace.com/index.cfm',
-        'query' => 'fuseaction=postto&t='. urlencode($title) .
-                   '&c='. urlencode($full) .
-                   '&u='. urlencode($url),
+        'query' => array(
+          'fuseaction' => 'postto',
+          't' => $title,
+          'c' => $full,
+          'u' => $url,
+        ),
         'attributes' => array('target' => '_blank'),
       );
     }
     if ($methods['delicious']) {
       $url = $urls['delicious'];
 
-      $links['delicious'] = array(
+      $links['links']['delicious'] = array(
         'title' => t('Delicious'),
         'href' => 'http://delicious.com/save',
-        'query' => 'v=5&noui&jump=close&url='. urlencode($url) .
-                   '&title='. urlencode($title),
+        'query' => array(
+          'v' => '5',
+          'noui' => NULL,
+          'jump' => 'close',
+          'url' => $url,
+          'title' => $title,
+        ),
         'attributes' => array('target' => '_blank'),
       );
     }
@@ -209,17 +219,17 @@ function simpleshare_service_links() {
       $url = $urls['email'];
       $full = "{$title} ({$url})";
 
-      $links['email'] = array(
+      $links['links']['email'] = array(
         'title' => t('E-mail'),
         'href' => 'mailto:',
-        // @TODO: test with more mail clients. Firefox -> Gmail integration
-        // does not like urlencode()'d strings.
-        'query' => array('Subject' => $title, 'Body' => $full),
+        'query' => array(
+          'subject' => $title,
+          'body' => $full,
+        ),
         'attributes' => array('target' => '_blank'),
       );
     }
     drupal_alter('simpleshare_service_links', $links);
-    $links = theme('links', $links);
     print theme('simpleshare_popup', $links, $html);
   }
   exit;
@@ -271,7 +281,7 @@ function _simpleshare_local_url($url) {
 }
 
 /**
- * Implementation of hook_theme().
+ * Implements hook_theme().
  */
 function simpleshare_theme() {
   return array('simpleshare_popup' => array());
@@ -280,11 +290,10 @@ function simpleshare_theme() {
 /**
  * Theme a share popup box.
  */
-function theme_simpleshare_popup($service_links, $text) {
+function theme_simpleshare_popup($service_links, $text = 'Share') {
   $output = "<div class='simpleshare-popup clear-block'>";
-  $output .= "<span class='close'>". t('Close') ."</span>";
-  $output .= "<h2>{$text}</h2>";
-  $output .= $service_links;
+  $output .= "<span class='close'>" . t('Close') . "</span>";
+  $output .= theme('links', array('links' => $service_links['links'], 'heading' => t($text)));
   $output .= "</div>";
   return $output;
 }

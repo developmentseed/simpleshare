@@ -1,4 +1,10 @@
 <?php
+// $Id$
+
+/**
+ * @file
+ * Administration settings for Simple Share.
+ */
 
 /**
  * Settings form.

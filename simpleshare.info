@@ -1,3 +1,9 @@
-core = "6.x"
+core = "7.x"
 description = "Simple sharing of URLs using various methods. Supports Twitter, Facebook and email."
 name = "Simple Share"
+
+files[] = simpleshare.module
+files[] = simpleshare.admin.module
+files[] = simpleshare_reaction_link.inc
+files[] = views/simpleshare.views.inc
+files[] = views/simpleshare_handler_field_link.inc

@@ -1,7 +1,13 @@
 <?php
+// $Id$
 
 /**
- * Implementation of hook_views_handlers()
+ * @file
+ * Views integration.
+ */
+
+/**
+ * Implements hook_views_handlers().
  */
 function simpleshare_views_handlers() {
   return array(
@@ -17,7 +23,7 @@ function simpleshare_views_handlers() {
 }
 
 /**
- * Implementation of hook_views_data_alter()
+ * Implements hook_views_data_alter().
  */
 function simpleshare_views_data_alter(&$data) {
   $data['views']['simpleshare_link'] = array(

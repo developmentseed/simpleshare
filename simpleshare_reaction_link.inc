@@ -1,4 +1,10 @@
 <?php
+// $Id$
+
+/**
+ * @file
+ * Context integration.
+ */
 
 /**
  * Provide a share link as a context reaction.
