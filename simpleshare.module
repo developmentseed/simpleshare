@@ -167,7 +167,7 @@ function simpleshare_service_links() {
       $links['twitter'] = array(
         'title' => t('Twitter'),
         'href' => 'http://twitter.com',
-        'query' => 'status='. urlencode($full_short),
+        'query' => 'status='. $full_short,
         'attributes' => array('target' => '_blank'),
       );
     }
