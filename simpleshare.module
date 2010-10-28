@@ -146,7 +146,7 @@ function simpleshare_context_registry() {
 function simpleshare_service_links() {
   if (isset($_GET['url'], $_GET['title']) &&
      (_simpleshare_local_url($_GET['url']) || variable_get('simpleshare_non_local_url', FALSE))) {
-    $title = check_plain($_GET['title']);
+    $title = filter_xss($_GET['title']);
     $url = check_url($_GET['url']);
 
     $methods = variable_get('simpleshare_methods', simpleshare_methods());
