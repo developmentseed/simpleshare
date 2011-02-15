@@ -220,7 +220,7 @@ function simpleshare_service_links() {
     }
     drupal_alter('simpleshare_service_links', $links);
     $links = theme('links', $links);
-    print theme('simpleshare_popup', $links, $html);
+    print theme('simpleshare_popup', $links, $title);
   }
   exit;
 }
